@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtualenvs
+.venv/
+venv/
+env/
+ENV/
+
+# uv
+.uv/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets & env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Project-specific
+# Apify local state
+apify_storage/
+storage/
+
+# Scraped HTML snapshots (large, not for commit)
+**/tests/snapshots/live/*.html
+
+# Cached downloads (Land Registry PPD etc.)
+data/cache/
+data/raw/
+
+# Models
+*.pkl
+*.joblib
+models/checkpoints/
