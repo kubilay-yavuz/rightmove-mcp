@@ -12,6 +12,7 @@ dependencies = [
     "uk-property-scrapers>=0.1.0",
     "uk-property-listings>=0.1.0",
     "uk-property-apify-client>=0.1.0",
+    "uk-property-apify-shared[crawler]>=0.1.0",
     "pydantic>=2.9",
 ]
 
@@ -37,6 +38,7 @@ packages = ["src/rightmove_mcp"]
 uk-property-scrapers = { path = "../uk-property-intel/packages/scrapers", editable = true }
 uk-property-listings = { path = "../uk-property-intel/packages/listings", editable = true }
 uk-property-apify-client = { path = "../uk-property-intel/packages/apify_client", editable = true }
+uk-property-apify-shared = { path = "../uk-property-apify/shared", editable = true }
 
 [dependency-groups]
 dev = [
