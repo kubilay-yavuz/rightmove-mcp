@@ -46,4 +46,12 @@ RUN if [ "$SKIP_PLAYWRIGHT_INSTALL" = "0" ]; then \
 # default; callers can override via smithery config or a mounted volume.
 ENV UK_PROPERTY_DELTA_STORE_PATH=/tmp/uk-property-mcp/rightmove.sqlite
 
-ENTRYPOINT ["rightmove-mcp"]
+# Smithery deprecated stdio for hosted servers on 2025-09-07; the container
+# now serves MCP over Streamable HTTP on port 8081 (overridable via $PORT).
+# The ``rightmove-mcp-http`` console script in pyproject.toml maps to
+# ``rightmove_mcp.server:run_http`` which configures FastMCP for HTTP. Local
+# stdio users keep the ``rightmove-mcp`` entrypoint via ``pip install``.
+ENV HOST=0.0.0.0 \
+    PORT=8081
+EXPOSE 8081
+ENTRYPOINT ["rightmove-mcp-http"]

@@ -473,5 +473,25 @@ def run_stdio() -> None:
     asyncio.run(server.run_stdio_async())
 
 
+def run_http() -> None:
+    """CLI entry point - serve over Streamable HTTP.
+
+    Used by Smithery's hosted container runtime (where stdio is no longer
+    supported). Binds to ``HOST:PORT`` from the environment, defaulting to
+    ``0.0.0.0:8081``. Runs in stateless mode so the gateway can route each
+    request independently.
+
+    Local users on Claude Desktop / Cursor keep using :func:`run_stdio`.
+    """
+    import os
+
+    logging.basicConfig(level=logging.INFO)
+    server = build_server()
+    server.settings.host = os.environ.get("HOST", "0.0.0.0")
+    server.settings.port = int(os.environ.get("PORT", "8081"))
+    server.settings.stateless_http = True
+    server.run(transport="streamable-http")
+
+
 if __name__ == "__main__":
     run_stdio()

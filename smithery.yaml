@@ -1,15 +1,16 @@
 # Smithery configuration for rightmove-mcp.
-# Docs: https://smithery.ai/docs/build/project-config
+# Docs: https://smithery.ai/docs/build
+#
+# `runtime: container` builds the Dockerfile at repo root. The container
+# serves MCP over Streamable HTTP on port 8081 because Smithery deprecated
+# stdio for hosted servers on 2025-09-07.
 runtime: "container"
 build:
   dockerfile: "Dockerfile"
   dockerBuildPath: "."
 
 startCommand:
-  type: "stdio"
-  timeout: 120000
-  pingInterval: 10000
-  pingTimeout: 30000
+  type: "http"
 
   configSchema:
     type: "object"
@@ -60,9 +61,15 @@ startCommand:
         description: "Path to the SQLite file that backs the `watch_listing` / firehose tools. Default `/tmp/uk-property-mcp/rightmove.sqlite` inside the container — data is ephemeral unless a volume is mounted. Mapped to the `UK_PROPERTY_DELTA_STORE_PATH` env var read by `uk_property_apify_shared.delta.mcp.default_store_path`."
         default: "/tmp/uk-property-mcp/rightmove.sqlite"
 
+  # `command` runs inside the built container, so it must resolve to a
+  # binary on PATH — here, the `rightmove-mcp-http` console script that
+  # the wheel installs. HOST/PORT are fixed to the values the gateway
+  # expects to scrape.
   commandFunction: |-
     (config) => {
       const env = {
+        HOST: "0.0.0.0",
+        PORT: "8081",
         UK_PROPERTY_APIFY_MODE: config.ukPropertyApifyMode || "auto",
         UK_PROPERTY_DELTA_STORE_PATH:
           config.ukPropertyDeltaStorePath || "/tmp/uk-property-mcp/rightmove.sqlite",
@@ -76,7 +83,7 @@ startCommand:
         env.DISCORD_WEBHOOK_URL = config.discordWebhookUrl;
       if (config.crawlerRatePerSec !== undefined)
         env.CRAWLER_RATE_PER_SEC = String(config.crawlerRatePerSec);
-      return { command: "rightmove-mcp", args: [], env };
+      return { command: "rightmove-mcp-http", args: [], env };
     }
 
   exampleConfig:

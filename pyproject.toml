@@ -23,6 +23,7 @@ mcp = [
 
 [project.scripts]
 rightmove-mcp = "rightmove_mcp.server:run_stdio"
+rightmove-mcp-http = "rightmove_mcp.server:run_http"
 
 [build-system]
 requires = ["hatchling"]
