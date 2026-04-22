@@ -1,0 +1,27 @@
+[project]
+name = "uk-property-apify-client"
+version = "0.1.0"
+description = "Typed client for delegating UK-property tool calls to the hosted Apify actor fleet (zoopla-listings, rightmove-listings, onthemarket-listings, epc-ct-ppd-unified, planning-aggregator, landlord-network, uk-tenders, uk-avm). Thin layer on top of apify-client with env-based configuration so MCPs and agent tools can route paying traffic through the moat actors without changing their public surface."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Kubilay Yavuz" }]
+keywords = ["uk", "property", "apify", "mcp", "delegation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pydantic>=2.9",
+    "apify-client>=1.8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uk_property_apify_client"]

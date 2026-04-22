@@ -1,0 +1,28 @@
+[project]
+name = "uk-property-scrapers"
+version = "0.2.0"
+description = "Pure-Python parsers for UK property listing portals (Zoopla, Rightmove, OnTheMarket). Browser-agnostic: takes HTML, returns Pydantic models. For fetching HTML, see uk-property-listings (free, httpx-only) or uk-property-apify-shared (private, anti-bot)."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Kubilay Yavuz" }]
+keywords = ["uk", "property", "zoopla", "rightmove", "onthemarket", "scraper"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+dependencies = [
+    "pydantic>=2.9",
+    "selectolax>=0.3.27",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uk_property_scrapers"]

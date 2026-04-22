@@ -1,0 +1,36 @@
+[project]
+name = "uk-property-apis"
+version = "0.1.0"
+description = "Typed async clients for UK government and public property APIs (EPC, Land Registry PPD, Companies House, Planning, Police, Postcodes.io, Environment Agency Flood, ONS)."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Kubilay Yavuz" }]
+keywords = ["uk", "property", "epc", "land-registry", "companies-house", "planning", "crime", "flood"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.9",
+    "selectolax>=0.3.27",
+    "tenacity>=9.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uk_property_apis"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "respx>=0.21",
+]

@@ -1,0 +1,84 @@
+# Smithery configuration for rightmove-mcp.
+# Docs: https://smithery.ai/docs/build/project-config
+runtime: "container"
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
+
+startCommand:
+  type: "stdio"
+  timeout: 120000
+  pingInterval: 10000
+  pingTimeout: 30000
+
+  configSchema:
+    type: "object"
+    title: "Rightmove MCP configuration"
+    description: |
+      All fields are optional. With no config, Rightmove MCP runs in "free
+      tier" mode: the public `SimpleCrawler`, dry-run-only action tools, and
+      a local SQLite delta store under `/tmp`. Supply an Apify API token to
+      delegate `search_listings` to the hosted `rightmove-listings` actor.
+    properties:
+      apifyApiToken:
+        type: "string"
+        title: "Apify API token"
+        description: "Enables delegation of `search_listings` to the hosted Rightmove actor. Leave empty to always run the local crawler."
+        secret: true
+      apifyUsername:
+        type: "string"
+        title: "Apify username"
+        description: "Owner of the `rightmove-listings` actor. Combined with the actor slug as `username~rightmove-listings`. Overridden by `apifyActorRightmoveListings` if set."
+      apifyActorRightmoveListings:
+        type: "string"
+        title: "Actor identifier override"
+        description: "Fully-qualified `username~slug` override (e.g. `kubilayyavuz~rightmove-listings-beta`)."
+      ukPropertyApifyMode:
+        type: "string"
+        title: "Apify delegation mode"
+        description: |
+          `auto` (default, delegate if token is set), `on` (same as auto),
+          `force` (raise if unconfigured), `off` (never delegate).
+        enum: ["auto", "on", "force", "off"]
+        default: "auto"
+      proxyUrl:
+        type: "string"
+        title: "Outbound proxy"
+        description: "HTTP(S) proxy URL for the local crawler."
+      discordWebhookUrl:
+        type: "string"
+        title: "Discord webhook for anti-bot alerts"
+        description: "Optional — the shared crawler posts escalation notices (Cloudflare / DataDome blocks) here."
+        secret: true
+      crawlerRatePerSec:
+        type: "number"
+        title: "Global rate ceiling (req/s)"
+        description: "Ceiling on outbound requests per second across every domain for the local crawler."
+      ukPropertyDeltaStorePath:
+        type: "string"
+        title: "Delta snapshot store path"
+        description: "Path to the SQLite file that backs the `watch_listing` / firehose tools. Default `/tmp/uk-property-mcp/rightmove.sqlite` inside the container — data is ephemeral unless a volume is mounted. Mapped to the `UK_PROPERTY_DELTA_STORE_PATH` env var read by `uk_property_apify_shared.delta.mcp.default_store_path`."
+        default: "/tmp/uk-property-mcp/rightmove.sqlite"
+
+  commandFunction: |-
+    (config) => {
+      const env = {
+        UK_PROPERTY_APIFY_MODE: config.ukPropertyApifyMode || "auto",
+        UK_PROPERTY_DELTA_STORE_PATH:
+          config.ukPropertyDeltaStorePath || "/tmp/uk-property-mcp/rightmove.sqlite",
+      };
+      if (config.apifyApiToken) env.APIFY_API_TOKEN = config.apifyApiToken;
+      if (config.apifyUsername) env.APIFY_USERNAME = config.apifyUsername;
+      if (config.apifyActorRightmoveListings)
+        env.APIFY_ACTOR_RIGHTMOVE_LISTINGS = config.apifyActorRightmoveListings;
+      if (config.proxyUrl) env.PROXY_URL = config.proxyUrl;
+      if (config.discordWebhookUrl)
+        env.DISCORD_WEBHOOK_URL = config.discordWebhookUrl;
+      if (config.crawlerRatePerSec !== undefined)
+        env.CRAWLER_RATE_PER_SEC = String(config.crawlerRatePerSec);
+      return { command: "rightmove-mcp", args: [], env };
+    }
+
+  exampleConfig:
+    ukPropertyApifyMode: "auto"
+    ukPropertyDeltaStorePath: "/tmp/uk-property-mcp/rightmove.sqlite"
